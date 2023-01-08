@@ -1,4 +1,3 @@
 # Dreambooth for the inpainting model
 
-This script was added by @thedarkzeno .
-
+From https://github.com/huggingface/diffusers/tree/main/examples/research_projects/dreambooth_inpaint
