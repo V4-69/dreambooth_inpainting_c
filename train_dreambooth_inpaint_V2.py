@@ -375,10 +375,15 @@ class DreamBoothDataset(Dataset):
         else:
             self.class_data_root = None
 
-        self.image_transforms = transforms.Compose(
+        self.image_transforms_resize_and_crop = transforms.Compose(
             [
                 transforms.Resize(size, interpolation=transforms.InterpolationMode.BILINEAR),
                 transforms.CenterCrop(size) if center_crop else transforms.RandomCrop(size),
+            ]
+        )
+
+        self.image_transforms = transforms.Compose(
+            [
                 transforms.ToTensor(),
                 transforms.Normalize([0.5], [0.5]),
             ]
@@ -421,7 +426,8 @@ class DreamBoothDataset(Dataset):
             sys.stdout.write(" [0;32m" +instance_prompt[:45]+" [0m")
             sys.stdout.flush()
 
-
+        instance_image = self.image_transforms_resize_and_crop(instance_image)                                                                  
+        example["PIL_images"] = instance_image
         example["instance_images"] = self.image_transforms(instance_image)
         example["instance_prompt_ids"] = self.tokenizer(
             instance_prompt,
@@ -434,8 +440,9 @@ class DreamBoothDataset(Dataset):
             class_image = Image.open(self.class_images_path[index % self.num_class_images])
             if not class_image.mode == "RGB":
                 class_image = class_image.convert("RGB")
-            example["class_images"] = self.image_transforms(class_image)
-            example["class_PIL_images"] = class_image                                         
+            class_image = self.image_transforms_resize_and_crop(class_image)
+            example["class_images"] = self.image_transforms(class_image)            
+            example["class_PIL_images"] = class_image
             example["class_prompt_ids"] = self.tokenizer(
                 self.class_prompt,
                 padding="do_not_pad",
