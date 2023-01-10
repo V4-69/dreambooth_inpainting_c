@@ -41,7 +41,7 @@ logger = get_logger(__name__)
 def prepare_mask_and_masked_image(image, mask, threshold=0.3):
     image = np.array(image.convert("RGB"))
     image = image[None].transpose(0, 3, 1, 2)
-    image = torch.from_numpy(image).to(dtype=torch.float32) / 255.0 
+    image = torch.from_numpy(image).to(dtype=torch.float32) / 127.5 - 1.0
 
     mask = np.array(mask.convert("L"))
     mask = mask.astype(np.float32) / 255.0
