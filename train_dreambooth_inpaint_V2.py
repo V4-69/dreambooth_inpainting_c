@@ -901,12 +901,13 @@ def main():
                     
                      print('save_dir:', save_dir, 'chkpth:', chkpth)
                      
-                     if args.mixed_precision=="fp16":
-                        chkpth += '_fp16' + ".ckpt" 
-                        subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py --model_path {save_dir} --checkpoint_path {chkpth} --half', shell=True)
-                     else:
-                        chkpth += ".ckpt" 
-                        subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py --model_path {save_dir} --checkpoint_path {chkpth}', shell=True)
+                     if False:
+                         if args.mixed_precision=="fp16":
+                            chkpth += '_fp16' + ".ckpt" 
+                            subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py --model_path {save_dir} --checkpoint_path {chkpth} --half', shell=True)
+                         else:
+                            chkpth += ".ckpt" 
+                            subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py --model_path {save_dir} --checkpoint_path {chkpth}', shell=True)
                      
                      print("Done, resuming training ...[0m")   
                      subprocess.call('rm -r '+ save_dir, shell=True)
