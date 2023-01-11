@@ -133,6 +133,12 @@ def parse_args():
         default="",
         help="The output directory where the model predictions and checkpoints will be written.",
     )
+    parser.add_argument(
+        "--home_dir",
+        type=str,
+        default="",
+        help="The directory where the convert_diffusers_to_original_stable_diffusion.py script is located.",
+    )
     parser.add_argument("--seed", type=int, default=None, help="A seed for reproducible training.")
     parser.add_argument(
         "--resolution",
@@ -897,7 +903,7 @@ def main():
                 )
                 pipeline.text_encoder.save_pretrained(frz_dir)
                          
-            if args.save_n_steps >= 15:
+            if args.save_n_steps >= 10:
                if global_step < args.max_train_steps and global_step+1==i:
                   ckpt_name = "_step_" + str(global_step+1)
                   save_dir = Path(args.output_dir+ckpt_name)
@@ -910,6 +916,7 @@ def main():
                   print(" [1;32mSAVING CHECKPOINT...")
                   # Create the pipeline using the trained modules and save it.
                   if accelerator.is_main_process:
+                     
                      pipeline = StableDiffusionPipeline.from_pretrained(
                            args.pretrained_model_name_or_path,
                            unet=accelerator.unwrap_model(unet),
@@ -917,14 +924,18 @@ def main():
                      )
                      pipeline.save_pretrained(save_dir)
                      frz_dir=args.output_dir + "/text_encoder_frozen"                    
+                     
                      if args.train_text_encoder and os.path.exists(frz_dir):
                         subprocess.call('rm -r '+save_dir+'/text_encoder/*.*', shell=True)
                         subprocess.call('cp -f '+frz_dir +'/*.* '+ save_dir+'/text_encoder', shell=True)                     
+                     
                      chkpth=args.Session_dir+"/"+inst+".ckpt"
+                     
                      if args.mixed_precision=="fp16":
-                        subprocess.call('python /content/diffusers/scripts/convertosdv2.py ' + save_dir + ' ' + chkpth + ' --fp16', shell=True)
+                        subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py ' + save_dir + ' ' + chkpth + ' --fp16', shell=True)
                      else:
-                        subprocess.call('python /content/diffusers/scripts/convertosdv2.py ' + save_dir + ' ' + chkpth, shell=True)
+                        subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py ' + save_dir + ' ' + chkpth, shell=True)
+                     
                      print("Done, resuming training ...[0m")   
                      subprocess.call('rm -r '+ save_dir, shell=True)
                      i=i+args.save_n_steps
