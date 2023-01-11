@@ -896,13 +896,16 @@ def main():
                         subprocess.call('cp -f '+frz_dir +'/*.* '+ save_dir+'/text_encoder', shell=True)                     
                      
                      chkpth=args.Session_dir+"/"+inst+".ckpt"
+                     
+                     chkpth = args.Session_dir + "/" + args.Session_dir[-args.Session_dir[::-1].find('/'):] + '_step_20'
                     
                      print('save_dir:', save_dir, 'chkpth:', chkpth)
-                     return 0
                      
                      if args.mixed_precision=="fp16":
+                        chkpth += '_fp16' + ".ckpt" 
                         subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py --model_path {save_dir} --checkpoint_path {chkpth} --half', shell=True)
                      else:
+                        chkpth += ".ckpt" 
                         subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py --model_path {save_dir} --checkpoint_path {chkpth}', shell=True)
                      
                      print("Done, resuming training ...[0m")   
