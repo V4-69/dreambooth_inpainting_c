@@ -898,7 +898,7 @@ def main():
                      chkpth=args.Session_dir+"/"+inst+".ckpt"
                      
                      if args.mixed_precision=="fp16":
-                        subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py --model_path {args.output_dir} --checkpoint_path {chkpth} --fp16', shell=True)
+                        subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py --model_path {args.output_dir} --checkpoint_path {chkpth} --half', shell=True)
                      else:
                         subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py --model_path {args.output_dir} --checkpoint_path {chkpth}', shell=True)
                      
