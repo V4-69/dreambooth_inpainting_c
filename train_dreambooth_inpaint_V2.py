@@ -869,7 +869,7 @@ def main():
                 pipeline.text_encoder.save_pretrained(frz_dir)
                          
             if args.save_n_steps >= 10:
-               print('global_step:', global_step, 'max_train_steps:', args.max_train_steps, 'i:', i)
+               #print('global_step:', global_step, 'max_train_steps:', args.max_train_steps, 'i:', i)
                if global_step < args.max_train_steps and global_step+1==i:
                   ckpt_name = "_step_" + str(global_step+1)
                   save_dir = Path(args.output_dir+ckpt_name)
@@ -898,9 +898,9 @@ def main():
                      chkpth=args.Session_dir+"/"+inst+".ckpt"
                      
                      if args.mixed_precision=="fp16":
-                        subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py ' + save_dir + ' ' + chkpth + ' --fp16', shell=True)
+                        subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py --model_path {args.output_dir} --checkpoint_path {chkpth} --fp16', shell=True)
                      else:
-                        subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py ' + save_dir + ' ' + chkpth, shell=True)
+                        subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py --model_path {args.output_dir} --checkpoint_path {chkpth}', shell=True)
                      
                      print("Done, resuming training ...[0m")   
                      subprocess.call('rm -r '+ save_dir, shell=True)
