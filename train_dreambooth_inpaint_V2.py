@@ -882,14 +882,15 @@ def main():
                   print(" [1;32mSAVING CHECKPOINT...")
                   # Create the pipeline using the trained modules and save it.
                   
-                  if accelerator.is_main_process and False:
+                  if accelerator.is_main_process:
                      
                      pipeline = StableDiffusionPipeline.from_pretrained(
                            args.pretrained_model_name_or_path,
-                           unet=accelerator.unwrap_model(unet),
-                           text_encoder=accelerator.unwrap_model(text_encoder),
+                           unet=unet, #accelerator.unwrap_model(unet),
+                           text_encoder=text_encoder#accelerator.unwrap_model(text_encoder),
                      )
                      pipeline.save_pretrained(save_dir)
+                     
                      frz_dir=args.output_dir + "/text_encoder_frozen"                    
                      
                      if args.train_text_encoder and os.path.exists(frz_dir):
@@ -898,16 +899,15 @@ def main():
                      
                      chkpth=args.Session_dir+"/"+inst+".ckpt"
                      
-                     chkpth = args.Session_dir + "/" + args.Session_dir[-args.Session_dir[::-1].find('/'):] + '_step_20'
+                     chkpth = args.Session_dir + "/" + args.Session_dir[-args.Session_dir[::-1].find('/'):] + ckpt_name
                     
-                     print('save_dir:', save_dir, 'chkpth:', chkpth)
-                     
+                     print('chkpth:', chkpth)
                      
                      if args.mixed_precision=="fp16":
-                        chkpth += '_fp16' + ".ckpt" 
+                        chkpth += '_fp16' + "-inpainting.ckpt"
                         subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py --model_path {save_dir} --checkpoint_path {chkpth} --half', shell=True)
                      else:
-                        chkpth += ".ckpt" 
+                        chkpth += "-inpainting.ckpt" 
                         subprocess.call(f'python {args.home_dir}/convert_diffusers_to_original_stable_diffusion.py --model_path {save_dir} --checkpoint_path {chkpth}', shell=True)
                      
                      print("Done, resuming training ...[0m")   
