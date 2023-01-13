@@ -635,6 +635,7 @@ def main():
 
     noise_scheduler = DDPMScheduler.from_config(args.pretrained_model_name_or_path, subfolder="scheduler")
     if args.scheduler == 'euler-ancestral':
+        print('scheduler: euler-ancestral');
         noise_scheduler = EulerAncestralDiscreteScheduler.from_config(args.pretrained_model_name_or_path, subfolder="scheduler")
 
     train_dataset = DreamBoothDataset(
